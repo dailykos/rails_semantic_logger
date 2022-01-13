@@ -17,7 +17,12 @@ module RailsSemanticLogger
 
           # According to PR https://github.com/reidmorrison/rails_semantic_logger/pull/37/files
           # payload[:params] is not always a Hash.
-          payload[:params] = payload[:params].to_unsafe_h unless payload[:params].is_a?(Hash)
+
+          if payload[:filtered_parameters]
+            payload[:params] = payload[:filtered_parameters]
+          elsif !payload[:params].is_a?(Hash)
+            payload[:params] = payload[:params].to_unsafe_h
+          end
           payload[:params] = payload[:params].except(*INTERNAL_PARAMS)
           payload.delete(:params) if payload[:params].empty?
 
